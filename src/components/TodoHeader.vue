@@ -2,7 +2,7 @@
     <div>
         <header>
             <h1>
-            Todo Header
+            Todo List
         </h1>
         </header>
     </div>

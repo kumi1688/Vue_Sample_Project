@@ -4,6 +4,7 @@
       <TodoInput v-on:addTodo="addTodo"></TodoInput>
       <TodoList v-bind:propsdata="todoItems" @removeTodo='removeTodo'></TodoList>
       <TodoFooter v-on:removeAll="clearAll"></TodoFooter>
+      <TodoCounter></TodoCounter>
   </div>
 </template>
 
@@ -12,13 +13,35 @@ import TodoHeader from './components/TodoHeader.vue'
 import TodoFooter from './components/TodoFooter.vue'
 import TodoInput from './components/TodoInput.vue'
 import TodoList from './components/TodoList.vue'
+import TodoCounter from './components/TodoCounter.vue'
+import 'vue-use-vuex';
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment (state) {
+      state.count++;
+    },
+    decrease(state){
+      state.count--;
+    }
+  }
+});
+
+Vue.use(Vuex);
 
 export default {
+  store,
   components: {
     'TodoHeader': TodoHeader,
     'TodoFooter': TodoFooter,
     'TodoInput' : TodoInput,
-    'TodoList' : TodoList
+    'TodoList' : TodoList,
+    'TodoCounter' : TodoCounter,
   },
   data(){
     return { todoItems: [] }
