@@ -12,7 +12,7 @@
 
               <div class="modal-body">
                 <slot name="body">
-                  
+                  {{value}}
                 </slot>
               </div>
 
@@ -32,7 +32,7 @@
 
 <script>
     export default{
-
+      props: ['value'],
     }
 </script>
 

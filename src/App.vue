@@ -1,10 +1,9 @@
 <template>
   <div id="app">
       <TodoHeader></TodoHeader>
-      <TodoInput v-on:addTodo="addTodo"></TodoInput>
-      <TodoList v-bind:propsdata="todoItems" @removeTodo='removeTodo'></TodoList>
-      <TodoFooter v-on:removeAll="clearAll"></TodoFooter>
-      <TodoCounter></TodoCounter>
+      <TodoInput></TodoInput>
+      <TodoList></TodoList>
+      <TodoFooter></TodoFooter>
   </div>
 </template>
 
@@ -13,14 +12,14 @@ import TodoHeader from './components/TodoHeader.vue'
 import TodoFooter from './components/TodoFooter.vue'
 import TodoInput from './components/TodoInput.vue'
 import TodoList from './components/TodoList.vue'
-import TodoCounter from './components/TodoCounter.vue'
 import 'vue-use-vuex';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
 const store = new Vuex.Store({
   state: {
-    count: 0
+    count: 0,
+    todoItems: [],
   },
   mutations: {
     increment (state) {
@@ -28,7 +27,41 @@ const store = new Vuex.Store({
     },
     decrease(state){
       state.count--;
-    }
+    },
+    setInitialTodo(state, todoItemList){
+      state.todoItems = todoItemList;
+      // console.log(state.todoItems);
+    },
+    addTodo(state, todoItem) {
+      localStorage.setItem(localStorage.length, todoItem);
+      state.todoItems.push(todoItem);
+    },
+    clearAll(state){
+      localStorage.clear();
+      state.todoItems = [];
+    },
+    removeTodo(state, data){
+      console.log(data);
+      
+      var length = localStorage.length;
+      localStorage.removeItem(data.index);
+      for(var i = data.index+1; i < length; i++){
+        var temp = localStorage.getItem(i);
+        console.log(temp);
+        localStorage.removeItem(i);
+        localStorage.setItem(i-1, temp);
+      }
+
+      state.todoItems.splice(data.index,1);
+      console.log(state.todoItems);
+    },
+    updateItem(state, data){
+      console.log(data);
+      localStorage.removeItem(data.index);
+      localStorage.setItem(data.index, data.newName); 
+      state.todoItems[data.index] = data.newName;
+      console.log(state.todoItems[data.index]);
+    },
   }
 });
 
@@ -41,32 +74,17 @@ export default {
     'TodoFooter': TodoFooter,
     'TodoInput' : TodoInput,
     'TodoList' : TodoList,
-    'TodoCounter' : TodoCounter,
-  },
-  data(){
-    return { todoItems: [] }
   },
   created(){
             if(localStorage.length > 0 ){
+                var list = [];
                 for(var i = 0; i < localStorage.length; i++){
-                    this.todoItems.push(localStorage.key(i));
+                    list = list.concat(localStorage.getItem(i));
                 }
+                
+                this.$store.commit('setInitialTodo', list);
             }
-        },
-  methods: {
-    addTodo(todoItem) {
-      localStorage.setItem(todoItem, todoItem);
-      this.todoItems.push(todoItem);
     },
-    clearAll(){
-      localStorage.clear();
-      this.todoItems = [];
-    },
-    removeTodo(todoItem, index){
-      localStorage.removeItem(todoItem);
-      this.todoItems.splice(index,1);
-    }
-  },
 }
 </script>
 
